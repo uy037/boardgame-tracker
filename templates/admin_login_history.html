@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Log de Accesos - Administración{% endblock %}
+
+{% block content %}
+<h1><i class="bi bi-activity"></i> Log de Accesos del Sistema</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Filtrar por usuario</label>
+                <select class="form-select" name="user" onchange="this.form.submit()">
+                    <option value="">Todos los usuarios</option>
+                    {% for user in all_users %}
+                    <option value="{{ user.id }}" {% if user_filter == user.id %}selected{% endif %}>
+                        {{ user.username }} ({{ user.role }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                {% if user_filter %}
+                <a href="{{ url_for('admin_login_history') }}" class="btn btn-secondary w-100">Limpiar Filtro</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if logs.items %}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Registros de Acceso ({{ logs.total }} total)</h5>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Fecha y Hora</th>
+                        <th>Usuario</th>
+                        <th>Rol</th>
+                        <th>IP</th>
+                        <th>Navegador/Dispositivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs.items %}
+                    <tr>
+                        <td>{{ log.login_time|gmt3 }}</td>
+                        <td>
+                            <a href="{{ url_for('user_login_history', user_id=log.user.id) }}">
+                                {{ log.user.username }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if log.user.role == 'admin' %}
+                            <span class="badge bg-danger">Admin</span>
+                            {% elif log.user.role == 'user' %}
+                            <span class="badge bg-primary">Usuario</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Invitado</span>
+                            {% endif %}
+                        </td>
+                        <td><code>{{ log.ip_address }}</code></td>
+                        <td>
+                            <small class="text-muted">{{ log.user_agent[:80] }}{% if log.user_agent|length > 80 %}...{% endif %}</small>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Paginación -->
+{% if logs.pages > 1 %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if logs.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin_login_history', page=logs.prev_num, user=user_filter or '') }}">Anterior</a>
+        </li>
+        {% endif %}
+        
+        {% for page_num in logs.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if page_num %}
+                <li class="page-item {% if page_num == logs.page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('admin_login_history', page=page_num, user=user_filter or '') }}">{{ page_num }}</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if logs.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin_login_history', page=logs.next_num, user=user_filter or '') }}">Siguiente</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> No hay registros de acceso
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Usuarios{% endblock %}
+
+{% block content %}
+<h1><i class="bi bi-people"></i> Gestión de Usuarios</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Agregar Nuevo Usuario</h5>
+        <form method="POST" action="{{ url_for('add_user') }}" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="username" placeholder="Nombre de usuario" required>
+            </div>
+            <div class="col-md-3">
+                <input type="password" class="form-control" name="password" placeholder="Contraseña" required minlength="4">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" name="role">
+                    <option value="user">Usuario</option>
+                    <option value="admin">Administrador</option>
+                    <option value="guest">Invitado</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-plus-circle"></i> Agregar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<h3>Usuarios Registrados ({{ users|length }})</h3>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Rol</th>
+                <th>Fecha Creación</th>
+                <th>Último Acceso</th>
+                <th>Calificaciones</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>
+                    <strong>{{ user.username }}</strong>
+                    {% if user.id == current_user.id %}
+                    <span class="badge bg-info">Tú</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.role == 'admin' %}
+                    <span class="badge bg-danger">Administrador</span>
+                    {% elif user.role == 'user' %}
+                    <span class="badge bg-primary">Usuario</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Invitado</span>
+                    {% endif %}
+                </td>
+                <td>{{ user.created_at.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    {% if user.last_login %}
+                    {{ user.last_login|gmt3 }}
+                    {% else %}
+                    <span class="text-muted">Nunca</span>
+                    {% endif %}
+                </td>
+                <td>{{ user.ratings|length }}</td>
+                <td>
+                    <a href="{{ url_for('user_login_history', user_id=user.id) }}" class="btn btn-sm btn-info" title="Ver historial">
+                        <i class="bi bi-clock-history"></i>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ user.id }}">
+                        <i class="bi bi-pencil"></i> Editar
+                    </button>
+                    {% if user.id != current_user.id %}
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ user.id }}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                    {% endif %}
+                </td>
+            </tr>
+            
+            <!-- Modal Editar Usuario -->
+            <div class="modal fade" id="editModal{{ user.id }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Editar Usuario: {{ user.username }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form method="POST" action="{{ url_for('edit_user', user_id=user.id) }}">
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Rol</label>
+                                    <select class="form-select" name="role">
+                                        <option value="user" {% if user.role == 'user' %}selected{% endif %}>Usuario</option>
+                                        <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrador</option>
+                                        <option value="guest" {% if user.role == 'guest' %}selected{% endif %}>Invitado</option>
+                                    </select>
+                                    {% if user.id == current_user.id %}
+                                    <small class="text-muted">No puedes cambiar tu propio rol de administrador</small>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Nueva Contraseña (opcional)</label>
+                                    <input type="password" class="form-control" name="password" minlength="4">
+                                    <small class="text-muted">Dejar en blanco para mantener la contraseña actual</small>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Eliminar Usuario -->
+            {% if user.id != current_user.id %}
+            <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirmar Eliminación</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>¿Estás seguro que deseas eliminar el usuario <strong>{{ user.username }}</strong>?</p>
+                            <p class="text-danger">Esta acción eliminará también todas las calificaciones de este usuario.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

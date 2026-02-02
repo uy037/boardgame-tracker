@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Editar {{ game.name }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('game_detail', game_id=game.id) }}">{{ game.name }}</a></li>
+        <li class="breadcrumb-item active">Editar</li>
+    </ol>
+</nav>
+
+<h1><i class="bi bi-pencil"></i> Editar Juego</h1>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label for="name" class="form-label">Nombre del Juego *</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ game.name }}" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="year_published" class="form-label">Año de Publicación</label>
+                    <input type="number" class="form-control" id="year_published" name="year_published" 
+                           value="{{ game.year_published or '' }}" min="1900" max="2030">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Descripción</label>
+                <textarea class="form-control" id="description" name="description" rows="4">{{ game.description or '' }}</textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="min_players" class="form-label">Jugadores Mínimo</label>
+                    <input type="number" class="form-control" id="min_players" name="min_players" 
+                           value="{{ game.min_players or '' }}" min="1">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="max_players" class="form-label">Jugadores Máximo</label>
+                    <input type="number" class="form-control" id="max_players" name="max_players" 
+                           value="{{ game.max_players or '' }}" min="1">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="playing_time" class="form-label">Duración (min)</label>
+                    <input type="number" class="form-control" id="playing_time" name="playing_time" 
+                           value="{{ game.playing_time or '' }}" min="1">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="min_age" class="form-label">Edad Mínima</label>
+                    <input type="number" class="form-control" id="min_age" name="min_age" 
+                           value="{{ game.min_age or '' }}" min="1">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="complexity" class="form-label">Complejidad (1-5)</label>
+                    <input type="number" class="form-control" id="complexity" name="complexity" 
+                           value="{{ game.complexity or '' }}" min="1" max="5" step="0.1">
+                    <small class="text-muted">1 = Muy fácil, 5 = Muy complejo</small>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="bgg_link" class="form-label">Link de BGG</label>
+                    <input type="url" class="form-control" id="bgg_link" name="bgg_link" 
+                           value="{{ game.bgg_link or '' }}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="designers" class="form-label">Diseñadores (separados por coma)</label>
+                    <input type="text" class="form-control" id="designers" name="designers" 
+                           value="{{ designers_str }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="publishers" class="form-label">Editoriales (separadas por coma)</label>
+                    <input type="text" class="form-control" id="publishers" name="publishers" 
+                           value="{{ publishers_str }}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="categories" class="form-label">Categorías (separadas por coma)</label>
+                    <input type="text" class="form-control" id="categories" name="categories" 
+                           value="{{ categories_str }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="mechanics" class="form-label">Mecánicas (separadas por coma)</label>
+                    <input type="text" class="form-control" id="mechanics" name="mechanics" 
+                           value="{{ mechanics_str }}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="image_url" class="form-label">URL de Imagen</label>
+                    <input type="url" class="form-control" id="image_url" name="image_url" 
+                           value="{{ game.image_url or '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="thumbnail_url" class="form-label">URL de Miniatura</label>
+                    <input type="url" class="form-control" id="thumbnail_url" name="thumbnail_url" 
+                           value="{{ game.thumbnail_url or '' }}">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Guardar Cambios
+                    </button>
+                    <a href="{{ url_for('game_detail', game_id=game.id) }}" class="btn btn-secondary">Cancelar</a>
+                </div>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="bi bi-trash"></i> Eliminar Juego
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro que deseas eliminar el juego <strong>{{ game.name }}</strong>?</p>
+                <p class="text-danger">Esta acción no se puede deshacer y eliminará también todas las calificaciones asociadas.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="POST" action="{{ url_for('delete_game', game_id=game.id) }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Sí, Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

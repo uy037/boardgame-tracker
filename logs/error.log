@@ -1,0 +1,13 @@
+2026/01/27 22:40:45 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23
+2026/01/28 04:06:03 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23
+2026/01/28 07:18:46 [error] 20#20: *318 open() "/var/www/certbot/.well-known/acme-challenge/index.php" failed (2: No such file or directory), client: 4.213.174.69, server: uy037.duckdns.org, request: "GET /.well-known/acme-challenge/index.php HTTP/1.1", host: "r186-54-140-150.dialup.adsl.anteldata.net.uy"
+2026/01/28 10:56:17 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23
+2026/01/29 04:01:33 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23
+2026/01/30 01:48:21 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23
+2026/01/31 04:03:29 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23
+2026/01/31 23:18:11 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23
+2026/01/31 23:54:29 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23
+2026/02/01 02:20:17 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23
+2026/02/01 02:20:15 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23
+2026/02/01 02:20:24 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23
+2026/02/01 02:20:23 [warn] 1#1: the "listen ... http2" directive is deprecated, use the "http2" directive instead in /etc/nginx/conf.d/boardgame.conf:23

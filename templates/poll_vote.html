@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Votar - {{ poll.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="mb-4">
+                <a href="{{ url_for('polls') }}" class="btn btn-sm btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+
+            <h2 class="mb-3"><i class="bi bi-calendar-event"></i> {{ poll.title }}</h2>
+            
+            {% if poll.description %}
+                <div class="alert alert-info">
+                    {{ poll.description }}
+                </div>
+            {% endif %}
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="bi bi-palette"></i> Sistema de Votacion</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 col-md-3 mb-2">
+                            <div class="p-3 rounded" style="background-color: #d4edda; border: 2px solid #28a745;">
+                                <div style="width: 40px; height: 40px; background-color: #28a745; border-radius: 50%; margin: 0 auto;"></div>
+                                <strong>Verde</strong>
+                                <p class="small mb-0">Me encanta esa fecha</p>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-2">
+                            <div class="p-3 rounded" style="background-color: #fff3cd; border: 2px solid #ffc107;">
+                                <div style="width: 40px; height: 40px; background-color: #ffc107; border-radius: 50%; margin: 0 auto;"></div>
+                                <strong>Amarillo</strong>
+                                <p class="small mb-0">Puedo sin problema</p>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-2">
+                            <div class="p-3 rounded" style="background-color: #ffe5cc; border: 2px solid #fd7e14;">
+                                <div style="width: 40px; height: 40px; background-color: #fd7e14; border-radius: 50%; margin: 0 auto;"></div>
+                                <strong>Naranja</strong>
+                                <p class="small mb-0">Puedo, pero me complica</p>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-2">
+                            <div class="p-3 rounded" style="background-color: #f8d7da; border: 2px solid #dc3545;">
+                                <div style="width: 40px; height: 40px; background-color: #dc3545; border-radius: 50%; margin: 0 auto;"></div>
+                                <strong>Rojo</strong>
+                                <p class="small mb-0">No puedo</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-muted small mt-2 mb-0">
+                        <i class="bi bi-info-circle"></i> Marca tu disponibilidad para cada fecha. Puedes cambiar tus votos mientras la encuesta esté abierta.
+                    </p>
+                </div>
+            </div>
+
+            <form method="POST">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Selecciona tu disponibilidad para cada fecha</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for option in poll.options.order_by('date_time') %}
+                        <div class="option-card mb-4 p-3 border rounded">
+                            <div class="row align-items-center">
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <h5 class="mb-1">
+                                        <i class="bi bi-calendar-event"></i> 
+                                        {{ option.date_time.strftime('%d/%m/%Y') }}
+                                    </h5>
+                                    <p class="mb-1">
+                                        <i class="bi bi-clock"></i> 
+                                        {{ option.date_time.strftime('%H:%M') }}hs
+                                    </p>
+                                    {% if option.description %}
+                                        <p class="text-muted small mb-0">{{ option.description }}</p>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-8">
+                                    {% set user_vote = option.get_user_vote(current_user.id) %}
+                                    {% set current_value = user_vote.value if user_vote else -1 %}
+                                    
+                                    <div class="btn-group w-100" role="group">
+                                        <input type="radio" class="btn-check" name="vote_{{ option.id }}" 
+                                               id="vote_{{ option.id }}_green" value="5" 
+                                               {% if current_value == 5 %}checked{% endif %}>
+                                        <label class="btn btn-outline-success" for="vote_{{ option.id }}_green">
+                                            Verde
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="vote_{{ option.id }}" 
+                                               id="vote_{{ option.id }}_yellow" value="3"
+                                               {% if current_value == 3 %}checked{% endif %}>
+                                        <label class="btn btn-outline-warning" for="vote_{{ option.id }}_yellow">
+                                            Amarillo
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="vote_{{ option.id }}" 
+                                               id="vote_{{ option.id }}_orange" value="2"
+                                               {% if current_value == 2 %}checked{% endif %}>
+                                        <label class="btn btn-outline-orange" for="vote_{{ option.id }}_orange">
+                                            Naranja
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="vote_{{ option.id }}" 
+                                               id="vote_{{ option.id }}_red" value="0"
+                                               {% if current_value == 0 %}checked{% endif %}>
+                                        <label class="btn btn-outline-danger" for="vote_{{ option.id }}_red">
+                                            Rojo
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Campo de comentario opcional -->
+                                    <div class="mt-2">
+                                        <input type="text" class="form-control form-control-sm" 
+                                               name="comment_{{ option.id }}" 
+                                               placeholder="Comentario opcional (ej: 'Prefiero despues de las 18h')"
+                                               value="{% if user_vote and user_vote.comment %}{{ user_vote.comment }}{% endif %}"
+                                               maxlength="200">
+                                        <small class="text-muted">Opcional: Agrega un comentario sobre tu voto</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-check-circle"></i> Guardar Votos
+                    </button>
+                    <a href="{{ url_for('poll_results', poll_id=poll.id) }}" class="btn btn-info btn-lg">
+                        <i class="bi bi-bar-chart"></i> Ver Resultados
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn-outline-orange {
+    color: #fd7e14;
+    border-color: #fd7e14;
+}
+
+.btn-outline-orange:hover,
+.btn-outline-orange:focus {
+    background-color: #fd7e14;
+    border-color: #fd7e14;
+    color: white;
+}
+
+.btn-check:checked + .btn-outline-orange {
+    background-color: #fd7e14;
+    border-color: #fd7e14;
+    color: white;
+}
+
+.option-card {
+    background-color: #f8f9fa;
+    transition: all 0.3s;
+}
+
+.option-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if next_event %}
+<div class="alert alert-success alert-dismissible fade show mb-0 border-0 rounded-0" role="alert" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+    <div class="container">
+        <div class="row align-items-center py-2">
+            <div class="col-md-8">
+                <h5 class="mb-1 text-white">
+                    <i class="bi bi-calendar-event-fill"></i> 
+                    <strong>Proxima Juntada de Juegos</strong>
+                </h5>
+                <div class="text-white">
+                    <i class="bi bi-calendar-check"></i> 
+                    <strong>{{ next_event.date.strftime('%d/%m/%Y') }}</strong> a las 
+                    <strong>{{ next_event.date.strftime('%H:%M') }}hs</strong>
+                    {% if next_event.option.description %}
+                    - {{ next_event.option.description }}
+                    {% endif %}
+                </div>
+                <div class="mt-1">
+                    <span class="badge bg-light text-success">
+                        <i class="bi bi-people-fill"></i> {{ next_event.can_attend }} confirmados
+                    </span>
+                    {% set all_attendees = next_event.voters.green + next_event.voters.yellow + next_event.voters.orange %}
+                    {% for voter in all_attendees %}
+                        <span class="badge bg-white text-dark">{{ voter.user.username }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-2 mt-md-0">
+                <a href="{{ next_event.option.get_google_calendar_url() }}" 
+                   target="_blank"
+                   class="btn btn-light btn-sm me-1">
+                    <i class="bi bi-calendar-plus"></i> Agregar a calendario
+                </a>
+                <a href="{{ url_for('poll_results', poll_id=next_event.poll.id) }}" 
+                   class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-info-circle"></i> Detalles
+                </a>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+
+<div class="container">
+    <h1 class="my-4">Catalogo de Juegos de Mesa</h1>
+
+<div class="row mb-4">
+    <div class="col-md-5">
+        <h1><i class="bi bi-collection"></i> Catálogo de Juegos</h1>
+        <p class="text-muted">{{ games.total }} juegos en la colección</p>
+    </div>
+    <div class="col-md-4">
+        <form method="GET" class="d-flex">
+            <input type="text" class="form-control me-2" name="search" placeholder="Buscar juego..." value="{{ search }}">
+            <input type="hidden" name="sort" value="{{ sort_by }}">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+    </div>
+    <div class="col-md-3">
+        <form method="GET" id="sortForm">
+            <input type="hidden" name="search" value="{{ search }}">
+            <select class="form-select" name="sort" onchange="document.getElementById('sortForm').submit()">
+                <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Más recientes</option>
+                <option value="rating_desc" {% if sort_by == 'rating_desc' %}selected{% endif %}>Mejor calificados</option>
+                <option value="rating_asc" {% if sort_by == 'rating_asc' %}selected{% endif %}>Peor calificados</option>
+                <option value="my_rating" {% if sort_by == 'my_rating' %}selected{% endif %}>Mis calificaciones</option>
+                <option value="complexity_desc" {% if sort_by == 'complexity_desc' %}selected{% endif %}>+ Complejo</option>
+                <option value="complexity_asc" {% if sort_by == 'complexity_asc' %}selected{% endif %}>- Complejo</option>
+            </select>
+        </form>
+    </div>
+</div>
+
+{% if games.items %}
+<div class="row g-4">
+    {% for game in games.items %}
+    <div class="col-md-6 col-lg-4 col-xl-3">
+        <div class="card game-card {% if game.user_rating(current_user.id) %}border-success border-3{% endif %}">
+            {% if game.thumbnail_url %}
+            <img src="{{ game.thumbnail_url }}" class="card-img-top" alt="{{ game.name }}">
+            {% else %}
+            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                <i class="bi bi-image text-white" style="font-size: 3rem;"></i>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title fw-bold">{{ game.name }}</h5>
+                <p class="card-text text-muted small">
+                    <i class="bi bi-calendar"></i> {{ game.year_published or 'N/A' }}
+                </p>
+                <div class="mb-2 d-flex flex-wrap gap-1">
+                    <span class="badge bg-primary badge-custom text-nowrap">
+                        <i class="bi bi-people"></i> {{ game.min_players }}-{{ game.max_players }}
+                    </span>
+                    <span class="badge bg-secondary badge-custom text-nowrap">
+                        <i class="bi bi-clock"></i> {{ game.playing_time or '?' }} min
+                    </span>
+                    {% if game.complexity %}
+                    <span class="badge bg-warning badge-custom text-nowrap" title="Complejidad">
+                        <i class="bi bi-puzzle-fill" style="font-size: 1.2em;"></i> {{ "%.1f"|format(game.complexity) }}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div class="rating-stars">
+                        {% set avg = game.average_rating() %}
+                        {% if avg > 0 %}
+                            {% for i in range(1, 11) %}
+                                {% if i <= avg %}
+                                    <i class="bi bi-star-fill"></i>
+                                {% elif i - 0.5 <= avg %}
+                                    <i class="bi bi-star-half"></i>
+                                {% else %}
+                                    <i class="bi bi-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <small class="text-muted">({{ "%.1f"|format(avg) }})</small>
+                        {% else %}
+                            <small class="text-muted">Sin calificaciones</small>
+                        {% endif %}
+                    </div>
+                </div>
+                {% set rating_count = game.ratings|length %}
+                {% if rating_count > 0 %}
+                <div class="d-flex justify-content-between align-items-center text-muted small mb-2">
+                    <span>
+                        <i class="bi bi-person-check"></i> {{ rating_count }} {% if rating_count == 1 %}calificación{% else %}calificaciones{% endif %}
+                    </span>
+                    {% if game.user_rating(current_user.id) %}
+                    <span class="badge bg-success">
+                        <i class="bi bi-check-circle-fill"></i> Califiqué
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+                <a href="{{ url_for('game_detail', game_id=game.id) }}" class="btn btn-sm btn-outline-primary mt-2 w-100">
+                    Ver detalles
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Paginación -->
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if games.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('index', page=games.prev_num, search=search, sort=sort_by) }}">Anterior</a>
+        </li>
+        {% endif %}
+
+        {% for page_num in games.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if page_num %}
+                <li class="page-item {% if page_num == games.page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('index', page=page_num, search=search, sort=sort_by) }}">{{ page_num }}</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if games.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('index', page=games.next_num, search=search, sort=sort_by) }}">Siguiente</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% else %}
+<div class="alert alert-info text-center">
+    <i class="bi bi-info-circle"></i> No se encontraron juegos{% if search %} con ese criterio de búsqueda{% endif %}.
+    {% if current_user.is_admin() %}
+    <br><a href="{{ url_for('add_game') }}" class="alert-link">Agregar juego</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

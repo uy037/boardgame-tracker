@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Juego{% endblock %}
+
+{% block content %}
+<h1><i class="bi bi-plus-circle"></i> Agregar Juego</h1>
+
+<!-- Tabs para elegir método -->
+<ul class="nav nav-tabs mb-4" id="addGameTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="manual-tab" data-bs-toggle="tab" data-bs-target="#manual" type="button">
+            <i class="bi bi-pencil"></i> Agregar Manualmente
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="bgg-tab" data-bs-toggle="tab" data-bs-target="#bgg" type="button">
+            <i class="bi bi-search"></i> Buscar en BGG (No Disponible)
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <!-- Formulario Manual -->
+    <div class="tab-pane fade show active" id="manual">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Información del Juego</h5>
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="name" class="form-label">Nombre del Juego *</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="year_published" class="form-label">Año de Publicación</label>
+                            <input type="number" class="form-control" id="year_published" name="year_published" min="1900" max="2030">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="Describe de qué trata el juego..."></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="min_players" class="form-label">Jugadores Mínimo</label>
+                            <input type="number" class="form-control" id="min_players" name="min_players" min="1">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="max_players" class="form-label">Jugadores Máximo</label>
+                            <input type="number" class="form-control" id="max_players" name="max_players" min="1">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="playing_time" class="form-label">Duración (min)</label>
+                            <input type="number" class="form-control" id="playing_time" name="playing_time" min="1">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="min_age" class="form-label">Edad Mínima</label>
+                            <input type="number" class="form-control" id="min_age" name="min_age" min="1">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="complexity" class="form-label">Complejidad (1-5)</label>
+                            <input type="number" class="form-control" id="complexity" name="complexity" min="1" max="5" step="0.1">
+                            <small class="text-muted">1 = Muy fácil, 5 = Muy complejo</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="bgg_link" class="form-label">Link de BGG (opcional)</label>
+                            <input type="url" class="form-control" id="bgg_link" name="bgg_link" placeholder="https://boardgamegeek.com/boardgame/...">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="designers" class="form-label">Diseñadores (separados por coma)</label>
+                            <input type="text" class="form-control" id="designers" name="designers" placeholder="Ej: Klaus Teuber, Reiner Knizia">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="publishers" class="form-label">Editoriales (separadas por coma)</label>
+                            <input type="text" class="form-control" id="publishers" name="publishers" placeholder="Ej: CMON, Fantasy Flight Games">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="categories" class="form-label">Categorías (separadas por coma)</label>
+                            <input type="text" class="form-control" id="categories" name="categories" placeholder="Ej: Estrategia, Familiar, Party">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="mechanics" class="form-label">Mecánicas (separadas por coma)</label>
+                            <input type="text" class="form-control" id="mechanics" name="mechanics" placeholder="Ej: Gestión de mano, Control de áreas">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="image_url" class="form-label">URL de Imagen (opcional)</label>
+                            <input type="url" class="form-control" id="image_url" name="image_url" placeholder="https://...">
+                            <small class="text-muted">URL directa a la imagen del juego</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="thumbnail_url" class="form-label">URL de Miniatura (opcional)</label>
+                            <input type="url" class="form-control" id="thumbnail_url" name="thumbnail_url" placeholder="https://...">
+                            <small class="text-muted">URL de imagen pequeña para listados</small>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> 
+                        <strong>Tip:</strong> Solo el nombre es obligatorio. Puedes agregar el juego con información básica y completarlo después si lo deseas.
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-save"></i> Guardar Juego
+                    </button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Búsqueda BGG -->
+    <div class="tab-pane fade" id="bgg">
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i> 
+            <strong>API de BGG No Disponible:</strong> BoardGameGeek cambió su API y ahora requiere autenticación Bearer Token que no está disponible públicamente. 
+            Por favor, usa el formulario manual para agregar juegos.
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Información</h5>
+                <p>La funcionalidad de importación automática desde BGG está temporalmente deshabilitada debido a cambios en su API.</p>
+                <p>Puedes:</p>
+                <ul>
+                    <li>Usar el formulario manual en la pestaña anterior</li>
+                    <li>Copiar información desde <a href="https://boardgamegeek.com" target="_blank">boardgamegeek.com</a> manualmente</li>
+                    <li>Agregar el link de BGG en el campo correspondiente del formulario</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+FROM python:3.13-slim
+
+WORKDIR /app
+
+# Instalar dependencias del sistema necesarias para psycopg2
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    postgresql-client \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar requirements y instalar dependencias Python
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar el código de la aplicación
+COPY . .
+
+# Crear directorio para la base de datos SQLite (por si usamos SQLite en desarrollo)
+RUN mkdir -p /app/instance
+
+# Exponer puerto
+EXPOSE 5000
+
+# Usuario no root para seguridad
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Comando por defecto
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--threads", "2", "--timeout", "120", "app:app"]

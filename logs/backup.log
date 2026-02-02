@@ -1,0 +1,73 @@
+Creando backup de la base de datos...
+no configuration file provided: not found
+Comprimiendo backup...
+Eliminando backups antiguos (más de 7 días)...
+Backup completado: boardgame_backup_20260127_020001.sql.gz
+Backups disponibles:
+total 4.0K
+-rw-rw-r-- 1 pi pi 57 Jan 27 02:00 boardgame_backup_20260127_020001.sql.gz
+Creando backup de la base de datos...
+Comprimiendo backup...
+Eliminando backups antiguos (más de 7 días)...
+Backup completado: boardgame_backup_20260128_020001.sql.gz
+Tamaño: 18K
+Backups disponibles:
+total 48K
+-rw-rw-r-- 1 pi pi 12K Jan 27 02:39 boardgame_backup_20260127_023914.sql.gz
+-rw-rw-r-- 1 pi pi 15K Jan 27 15:26 boardgame_backup_20260127_152634.sql.gz
+-rw-rw-r-- 1 pi pi 18K Jan 28 02:00 boardgame_backup_20260128_020001.sql.gz
+Creando backup de la base de datos...
+Comprimiendo backup...
+Eliminando backups antiguos (más de 7 días)...
+Backup completado: boardgame_backup_20260129_020001.sql.gz
+Tamaño: 19K
+Backups disponibles:
+total 68K
+-rw-rw-r-- 1 pi pi 12K Jan 27 02:39 boardgame_backup_20260127_023914.sql.gz
+-rw-rw-r-- 1 pi pi 15K Jan 27 15:26 boardgame_backup_20260127_152634.sql.gz
+-rw-rw-r-- 1 pi pi 18K Jan 28 02:00 boardgame_backup_20260128_020001.sql.gz
+-rw-rw-r-- 1 pi pi 19K Jan 29 02:00 boardgame_backup_20260129_020001.sql.gz
+Creando backup de la base de datos...
+Comprimiendo backup...
+Eliminando backups antiguos (más de 7 días)...
+Backup completado: boardgame_backup_20260130_020001.sql.gz
+Tamaño: 19K
+Backups disponibles:
+total 108K
+-rw-rw-r-- 1 pi pi 12K Jan 27 02:39 boardgame_backup_20260127_023914.sql.gz
+-rw-rw-r-- 1 pi pi 15K Jan 27 15:26 boardgame_backup_20260127_152634.sql.gz
+-rw-rw-r-- 1 pi pi 18K Jan 28 02:00 boardgame_backup_20260128_020001.sql.gz
+-rw-rw-r-- 1 pi pi 19K Jan 29 02:00 boardgame_backup_20260129_020001.sql.gz
+-rw-rw-r-- 1 pi pi 19K Jan 29 22:26 boardgame_backup_20260129_222602.sql.gz
+-rw-rw-r-- 1 pi pi 19K Jan 30 02:00 boardgame_backup_20260130_020001.sql.gz
+Creando backup de la base de datos...
+Comprimiendo backup...
+Eliminando backups antiguos (más de 7 días)...
+Backup completado: boardgame_backup_20260131_020001.sql.gz
+Tamaño: 20K
+Backups disponibles:
+total 148K
+-rw-rw-r-- 1 pi pi 12K Jan 27 02:39 boardgame_backup_20260127_023914.sql.gz
+-rw-rw-r-- 1 pi pi 15K Jan 27 15:26 boardgame_backup_20260127_152634.sql.gz
+-rw-rw-r-- 1 pi pi 18K Jan 28 02:00 boardgame_backup_20260128_020001.sql.gz
+-rw-rw-r-- 1 pi pi 19K Jan 29 02:00 boardgame_backup_20260129_020001.sql.gz
+-rw-rw-r-- 1 pi pi 19K Jan 29 22:26 boardgame_backup_20260129_222602.sql.gz
+-rw-rw-r-- 1 pi pi 19K Jan 30 02:00 boardgame_backup_20260130_020001.sql.gz
+-rw-rw-r-- 1 pi pi 20K Jan 30 20:47 boardgame_backup_20260130_204736.sql.gz
+-rw-rw-r-- 1 pi pi 20K Jan 31 02:00 boardgame_backup_20260131_020001.sql.gz
+Creando backup de la base de datos...
+Comprimiendo backup...
+Eliminando backups antiguos (más de 7 días)...
+Backup completado: boardgame_backup_20260201_020001.sql.gz
+Tamaño: 19K
+Backups disponibles:
+total 168K
+-rw-rw-r-- 1 pi pi 12K Jan 27 02:39 boardgame_backup_20260127_023914.sql.gz
+-rw-rw-r-- 1 pi pi 15K Jan 27 15:26 boardgame_backup_20260127_152634.sql.gz
+-rw-rw-r-- 1 pi pi 18K Jan 28 02:00 boardgame_backup_20260128_020001.sql.gz
+-rw-rw-r-- 1 pi pi 19K Jan 29 02:00 boardgame_backup_20260129_020001.sql.gz
+-rw-rw-r-- 1 pi pi 19K Jan 29 22:26 boardgame_backup_20260129_222602.sql.gz
+-rw-rw-r-- 1 pi pi 19K Jan 30 02:00 boardgame_backup_20260130_020001.sql.gz
+-rw-rw-r-- 1 pi pi 20K Jan 30 20:47 boardgame_backup_20260130_204736.sql.gz
+-rw-rw-r-- 1 pi pi 20K Jan 31 02:00 boardgame_backup_20260131_020001.sql.gz
+-rw-rw-r-- 1 pi pi 19K Feb  1 02:00 boardgame_backup_20260201_020001.sql.gz
