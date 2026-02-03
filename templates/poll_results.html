@@ -94,24 +94,98 @@
                                 <span class="badge bg-danger">Rojo {{ winner.red }}</span>
                             </div>
                         </div>
-                        <div class="mt-3">
-                            <div class="d-flex justify-content-around">
-                                <span class="badge bg-success">Verde {{ winner.green }}</span>
-                                <span class="badge bg-warning">Amarillo {{ winner.yellow }}</span>
-                                <span class="badge" style="background-color: #fd7e14;">Naranja {{ winner.orange }}</span>
-                                <span class="badge bg-danger">Rojo {{ winner.red }}</span>
-                            </div>
+                        
+                        <!-- Botón Ver quiénes votaron (ganador) -->
+                        <div class="text-center mt-3">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" 
+                                    data-bs-toggle="collapse" data-bs-target="#voters_winner_{{ winner.option.id }}">
+                                <i class="bi bi-people"></i> Ver quiénes votaron
+                            </button>
                         </div>
-                        <!-- NUEVO: Botón de Google Calendar -->
-                        <div class="text-center mt-3 pt-3 border-top">
-                            <a href="{{ winner.option.get_google_calendar_url() }}" 
-                               target="_blank" 
-                               class="btn btn-success btn-lg">
-                                <i class="bi bi-calendar-plus"></i> Agregar a Google Calendar
-                            </a>
-                            <p class="small text-muted mt-2 mb-0">
-                                <i class="bi bi-info-circle"></i> Se abrirá en una nueva pestaña para agregar el evento a tu calendario
-                            </p>
+                        
+                        <!-- Detalle de votantes del ganador (colapsable) -->
+                        <div class="collapse mt-3" id="voters_winner_{{ winner.option.id }}">
+                            <div class="card card-body bg-light">
+                                <h6 class="mb-2"><i class="bi bi-people-fill"></i> Detalle de Votantes:</h6>
+                                {% set voters = winner.option.get_voters_by_color() %}
+                                
+                                <div class="row">
+                                    {% if voters.green %}
+                                    <div class="col-6 col-md-3 mb-2">
+                                        <strong class="text-success">Verde:</strong>
+                                        <ul class="list-unstyled mb-0 small">
+                                            {% for voter in voters.green %}
+                                            <li>
+                                                <i class="bi bi-person-check-fill"></i> {{ voter.user.username }}
+                                                {% if voter.comment %}
+                                                <br><em class="text-muted">"{{ voter.comment }}"</em>
+                                                {% endif %}
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if voters.yellow %}
+                                    <div class="col-6 col-md-3 mb-2">
+                                        <strong class="text-warning">Amarillo:</strong>
+                                        <ul class="list-unstyled mb-0 small">
+                                            {% for voter in voters.yellow %}
+                                            <li>
+                                                <i class="bi bi-person-check"></i> {{ voter.user.username }}
+                                                {% if voter.comment %}
+                                                <br><em class="text-muted">"{{ voter.comment }}"</em>
+                                                {% endif %}
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if voters.orange %}
+                                    <div class="col-6 col-md-3 mb-2">
+                                        <strong style="color: #fd7e14;">Naranja:</strong>
+                                        <ul class="list-unstyled mb-0 small">
+                                            {% for voter in voters.orange %}
+                                            <li>
+                                                <i class="bi bi-person-dash"></i> {{ voter.user.username }}
+                                                {% if voter.comment %}
+                                                <br><em class="text-muted">"{{ voter.comment }}"</em>
+                                                {% endif %}
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if voters.red %}
+                                    <div class="col-6 col-md-3 mb-2">
+                                        <strong class="text-danger">Rojo (No pueden):</strong>
+                                        <ul class="list-unstyled mb-0 small">
+                                            {% for voter in voters.red %}
+                                            <li>
+                                                <i class="bi bi-person-x-fill"></i> {{ voter.user.username }}
+                                                {% if voter.comment %}
+                                                <br><em class="text-muted">"{{ voter.comment }}"</em>
+                                                {% endif %}
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mt-2">
+                                    <strong class="text-success">Asistiran ({{ winner.can_attend }}):</strong>
+                                    {% if voters.green or voters.yellow or voters.orange %}
+                                        {% for voter in voters.green + voters.yellow + voters.orange %}
+                                            <span class="badge bg-success">{{ voter.user.username }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="text-muted">Nadie confirmado</span>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -119,19 +193,18 @@
         </div>
         {% endif %}
 
-        <!-- Todas las opciones -->
-        <h4 class="mb-3">Todas las Opciones</h4>
+        <!-- Otras opciones (se salta la ganadora, ya se muestra arriba) -->
+        {% if results|length > 1 %}
+        <h4 class="mb-3">Otras Opciones</h4>
+        {% endif %}
         {% for result in results %}
-        <div class="card mb-3 {% if loop.first and result.can_attend > 0 %}border-success{% endif %}">
+        {% if not (loop.first and winner.can_attend > 0) %}
+        <div class="card mb-3">
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-md-3">
                         <h5 class="mb-1">
-                            {% if loop.first and result.can_attend > 0 %}
-                                <i class="bi bi-trophy-fill text-warning"></i>
-                            {% else %}
-                                <span class="badge bg-secondary">{{ loop.index }}</span>
-                            {% endif %}
+                            <span class="badge bg-secondary">{{ loop.index }}</span>
                             {{ result.option.date_time.strftime('%d/%m/%Y') }}
                         </h5>
                         <p class="mb-1">
@@ -316,6 +389,7 @@
                 {% endif %}
             </div>
         </div>
+        {% endif %}
         {% endfor %}
 
         <!-- Explicación del criterio -->
