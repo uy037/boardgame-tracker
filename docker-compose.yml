@@ -30,6 +30,7 @@ services:
       - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
       - DATABASE_URL=postgresql+psycopg://bguser:bgpassword@db:5432/boardgames
       - FLASK_ENV=${FLASK_ENV:-production}
+      - BGG_API_TOKEN=${BGG_API_TOKEN}
     networks:
       - boardgame_network
     volumes:

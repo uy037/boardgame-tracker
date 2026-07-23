@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16
+    container_name: boardgame-dev-db
+    environment:
+      POSTGRES_DB: boardgame
+      POSTGRES_USER: boardgame
+      POSTGRES_PASSWORD: devpassword
+    volumes:
+      - boardgame_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U boardgame"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: boardgame-dev-app
+    environment:
+      DATABASE_URL: postgresql://boardgame:devpassword@db:5432/boardgame
+      FLASK_ENV: development
+      FLASK_SECRET_KEY: dev_secret_key
+      BGG_API_TOKEN: ${BGG_API_TOKEN}
+      PYTHONUNBUFFERED: "1"
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+
+volumes:
+  boardgame_dev_data:
